@@ -32,6 +32,8 @@ ob_start();
 $trace       = $e->getTrace();
 $trace_count = count($trace);
 for( $i = 0; $i < $trace_count; $i++):
+
+$t = $trace[$i];
 ?>
 
 <tr>
