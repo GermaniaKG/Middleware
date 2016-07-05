@@ -6,7 +6,7 @@ if (!isset($e) or (!$e instanceOf \Exception)) {
 ob_start();
 ?>
 <p>Exception class <?php echo get_class($e); ?></b></p>
-<h2 style="border-bottom: 1px solid black"><?php echo $e.getMessage(); ?></h2>
+<h2 style="border-bottom: 1px solid black"><?php echo $e->getMessage(); ?></h2>
 
 <table>
 
