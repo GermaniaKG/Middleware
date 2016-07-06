@@ -57,7 +57,7 @@ class EmailExceptionMiddleware
             // Try to do business as usual...
             return $next($request, $response);
         } catch (\Exception $e) {
-            $text = $this->renderException($e);
+            $text = $this->render($e);
 
             $message = $this->getMessage();
             $message->setContentType('text/html')
@@ -76,7 +76,7 @@ class EmailExceptionMiddleware
      *
      * @return string Exception explanation
      */
-    public function renderException($e)
+    public function render($e)
     {
         return require $this->include_file;
     }
