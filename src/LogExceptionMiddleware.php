@@ -36,16 +36,16 @@ class LogExceptionMiddleware
         } catch (\Exception $e) {
             $context = [
                 'class' => get_class($e),
-                'file'  => $e->getFile(),
-                'line'  => $e->getLine()
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ];
 
             if ($f = $e->getPrevious()) {
-                $context['previous'] = implode (" / ", [
+                $context['previous'] = implode(' / ', [
                     $f->getMessage(),
-                    'class: ' . get_class($f),
-                    'file: ' . $f->getFile(),
-                    'line: ' . $f->getLine()
+                    'class: '.get_class($f),
+                    'file: '.$f->getFile(),
+                    'line: '.$f->getLine(),
                 ]);
             }
 
