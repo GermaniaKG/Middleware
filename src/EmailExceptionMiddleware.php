@@ -1,17 +1,22 @@
 <?php
+
 namespace Germania\Middleware;
 
-use Interop\Container\ContainerInterface;
+use Germania\Middleware\Exceptions\FactoryException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class EmailExceptionMiddleware
 {
+    /**
+     * @var callable
+     */
+    public $mailer_factory;
 
     /**
-     * @var ContainerInterface
+     * @var callable
      */
-    public $container;
+    public $message_factory;
 
     /**
      * @var string
@@ -23,52 +28,88 @@ class EmailExceptionMiddleware
      */
     public $include_file;
 
-
     /**
-     * @param string $app_name
-     * @param ContainerInterface $container
+     * @param string   $app_name        Name of application (used in email subject)
+     * @param callable $mailer_factory
+     * @param callable $message_factory
      */
-    public function __construct( $app_name, ContainerInterface $container)
+    public function __construct($app_name, callable $mailer_factory, callable $message_factory)
     {
-        $this->app_name  = $app_name;
-        $this->container = $container;
+        $this->app_name = $app_name;
 
-        $include_path = realpath(__DIR__ . '/../includes');
-        $this->include_file = $include_path . '/exception.php';
+        $this->mailer_factory = $mailer_factory;
+        $this->message_factory = $message_factory;
+
+        $include_path = realpath(__DIR__.'/../includes');
+        $this->include_file = $include_path.'/exception.php';
     }
-
 
     /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     * @param Callable               $next
+     * @param callable               $next
      *
      * @return ResponseInterface
      */
-    public function __invoke (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
-
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
         try {
+            // Try to do business as usual...
             return $next($request, $response);
-        }
-        catch (\Exception $e) {
-            $text = $this->renderException( $e );
+        } catch (\Exception $e) {
+            $text = $this->renderException($e);
 
-            $message = $this->container->get('new_message')
-                ->setContentType('text/html')
-                ->setSubject( "[" . $this->app_name . "]: Exception Abort: " . get_class($e))
-                ->setBody( $text );
+            $message = $this->getMessage();
+            $message->setContentType('text/html')
+                    ->setSubject('['.$this->app_name.']: Exception Abort: '.get_class($e))
+                    ->setBody($text);
 
-            $this->container->get('mailer')->send( $message);
+            $mailer = $this->getMailer();
+            $mailer->send($message);
 
             throw $e;
         }
-
     }
 
     /**
      * @param Exception $e
+     *
+     * @return string Exception explanation
      */
-    public function renderException( $e ) {
-        return require( $this->include_file );
+    public function renderException($e)
+    {
+        return require $this->include_file;
+    }
+
+    /**
+     * @return Swift_Mailer
+     *
+     * @throws FactoryException
+     */
+    public function getMailer()
+    {
+        $mailer_factory = $this->mailer_factory;
+        $mailer = $mailer_factory();
+        if (!$mailer instanceof Swift_Mailer) {
+            throw new FactoryException('Mailer factory must return Swift_Mailer instance.', 0, $e);
+        }
+
+        return $mailer;
+    }
+
+    /**
+     * @return Swift_Message
+     *
+     * @throws FactoryException
+     */
+    public function getMessage()
+    {
+        $message_factory = $this->message_factory;
+        $message = $message_factory();
+        if (!$message instanceof Swift_Message) {
+            throw new FactoryException('Message factory must return Swift_Message instance.', 0, $e);
+        }
+
+        return $message;
     }
 }
