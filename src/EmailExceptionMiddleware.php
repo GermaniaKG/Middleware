@@ -91,7 +91,7 @@ class EmailExceptionMiddleware
         $mailer_factory = $this->mailer_factory;
         $mailer = $mailer_factory();
         if (!$mailer instanceof Swift_Mailer) {
-            throw new FactoryException('Mailer factory must return Swift_Mailer instance.', 0, $e);
+            throw new FactoryException('Mailer factory must return Swift_Mailer instance.');
         }
 
         return $mailer;
@@ -107,7 +107,7 @@ class EmailExceptionMiddleware
         $message_factory = $this->message_factory;
         $message = $message_factory();
         if (!$message instanceof Swift_Message) {
-            throw new FactoryException('Message factory must return Swift_Message instance.', 0, $e);
+            throw new FactoryException('Message factory must return Swift_Message instance.');
         }
 
         return $message;
