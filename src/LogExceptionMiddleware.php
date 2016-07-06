@@ -34,11 +34,22 @@ class LogExceptionMiddleware
         try {
             return $next($request, $response);
         } catch (\Exception $e) {
-            $this->log->warning($e->getMessage(), [
+            $context = [
                 'class' => get_class($e),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine()
+            ];
+
+            if ($f = $e->getPrevious()) {
+                $context['previous'] = implode (" / ", [
+                    $f->getMessage(),
+                    'class: ' . get_class($f),
+                    'file: ' . $f->getFile(),
+                    'line: ' . $f->getLine()
+                ]);
+            }
+
+            $this->log->warning($e->getMessage(), $context);
 
             throw $e;
         }
