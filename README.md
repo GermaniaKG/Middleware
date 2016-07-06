@@ -1,6 +1,12 @@
 #Germania Middleware
 
-**Middleware for Slim3 based web apps**
+Middleware tools for apps which accept PSR-7 style middleware, such as [Slim3](http://www.slimframework.com/docs/concepts/middleware.html)
+
+- `\Psr\Http\Message\ServerRequestInterface` - The PSR7 request object
+- `\Psr\Http\Message\ResponseInterface` - The PSR7 response object
+- `callable` - The next middleware callable
+
+[Oscar Otero's](https://github.com/oscarotero) [psr7-middlewares](https://github.com/oscarotero/psr7-middlewares) repo lists other middlewares and PHP software that utilize this pattern.
 
 
 ##EmailExceptionMiddleware
@@ -22,6 +28,27 @@ $message_factory = function() {
 $middleware = new EmailExceptionMiddleware("My APP", $mailer_factory, $message_factory);
 $app->add( $middleware );
 ```
+
+####Bonus: Display exception information 
+
+```php
+<?php
+use Germania\Middleware\EmailExceptionMiddleware;
+
+$middleware = new EmailExceptionMiddleware("My APP", $mailer_factory, $message_factory);
+
+try {
+	throw new \Exception("Huh?");
+}
+catch (\Exception $e) {
+	echo $middleware->render( $e );
+}
+```
+
+
+
+
+
 
 ##ScriptRuntimeMiddleware
 
