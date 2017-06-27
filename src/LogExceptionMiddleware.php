@@ -13,14 +13,15 @@ class LogExceptionMiddleware
      */
     public $log;
 
+
     /**
      * @param LoggerInterface $log
-     * @param float           $start_time Script start time as float, defaults to "now"
      */
     public function __construct(LoggerInterface $log)
     {
         $this->log = $log;
     }
+
 
     /**
      * @param ServerRequestInterface $request
@@ -31,27 +32,53 @@ class LogExceptionMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        try {
+        try
+        {
+            // Try to do business as usual...
             return $next($request, $response);
-        } catch (\Exception $e) {
-            $context = [
-                'class' => get_class($e),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ];
+        }
 
-            if ($f = $e->getPrevious()) {
-                $context['previous'] = implode(' / ', [
-                    $f->getMessage(),
-                    'class: '.get_class($f),
-                    'file: '.$f->getFile(),
-                    'line: '.$f->getLine(),
-                ]);
-            }
-
-            $this->log->warning($e->getMessage(), $context);
-
+        // Executed only in PHP 7, will not match in PHP 5.x
+        catch (\Throwable $e)
+        {
+            $this->handleThrowable( $e );
             throw $e;
         }
+
+        // Executed only in PHP 5.x, will not be reached in PHP 7
+        catch (\Exception $e)
+        {
+            $this->handleThrowable( $e );
+            throw $e;
+        }
+
+        // Anything else NOT caught here will bubble up.
     }
+
+
+    /**
+     * @param  \Exception|\Throwable $e
+     */
+    public function handleThrowable( $e )
+    {
+        $context = [
+            'class'   => get_class($e),
+            'code'    => $e->getCode(),
+            'file'    => $e->getFile(),
+            'line'    => $e->getLine(),
+        ];
+
+        if ($f = $e->getPrevious()) {
+            $context['previous'] = implode(' / ', [
+                $f->getMessage(),
+                'class: ' . get_class($f),
+                'code: ' . $f->getCode(),
+                'file: ' . $f->getFile(),
+                'line: ' . $f->getLine(),
+            ]);
+        }
+
+        $this->log->warning($e->getMessage(), $context);
+    }
+
 }

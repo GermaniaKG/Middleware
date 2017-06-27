@@ -37,11 +37,11 @@ $t = $trace[$i];
 ?>
 
 <tr>
-  <td style="text-align: left"><?php echo ($trace_count - $i); ?></td>
-  <td style="text-align: left"><?php echo isset($t['file']) ? $t['file'] : ""; ?></td>
-  <td style="text-align: left"><?php echo isset($t['line']) ? $t['line'] : ""; ?></td>
-  <td style="text-align: left"><?php echo isset($t['function']) ? $t['function'] : ""; ?></td>
-  <td style="text-align: left"><?php echo (!empty($t['args'])) ? json_encode( $t['args'] ) : ""; ?></td>
+  <td style="text-align: left; vertical-align: top;"><?php echo ($trace_count - $i); ?></td>
+  <td style="text-align: left; vertical-align: top;"><?php echo isset($t['file']) ? $t['file'] : ""; ?></td>
+  <td style="text-align: left; vertical-align: top;"><?php echo isset($t['line']) ? $t['line'] : ""; ?></td>
+  <td style="text-align: left; vertical-align: top;"><?php echo isset($t['function']) ? $t['function'] : ""; ?></td>
+  <td style="text-align: left; vertical-align: top;"><?php echo (!empty($t['args'])) ? json_encode( $t['args'] ) : ""; ?></td>
 </tr>
 
 <?php
