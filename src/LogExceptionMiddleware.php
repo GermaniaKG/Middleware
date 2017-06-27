@@ -16,7 +16,6 @@ class LogExceptionMiddleware
 
     /**
      * @param LoggerInterface $log
-     * @param float           $start_time Script start time as float, defaults to "now"
      */
     public function __construct(LoggerInterface $log)
     {
