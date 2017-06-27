@@ -61,19 +61,22 @@ class EmailExceptionMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        try {
+        try
+        {
             // Try to do business as usual...
             return $next($request, $response);
         }
 
         // Executed only in PHP 7, will not match in PHP 5.x
-        catch (\Throwable $e) {
+        catch (\Throwable $e)
+        {
             $this->handleThrowable( $e );
             throw $e;
         }
 
         // Executed only in PHP 5.x, will not be reached in PHP 7
-        catch (\Exception $e) {
+        catch (\Exception $e)
+        {
             $this->handleThrowable( $e );
             throw $e;
         }
