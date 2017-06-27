@@ -13,20 +13,24 @@ class EmailExceptionMiddleware
      */
     public $mailer_factory;
 
+
     /**
      * @var callable
      */
     public $message_factory;
+
 
     /**
      * @var string
      */
     public $app_name;
 
+
     /**
      * @var string
      */
     public $include_file;
+
 
     /**
      * @param string   $app_name        Name of application (used in email subject)
@@ -43,6 +47,7 @@ class EmailExceptionMiddleware
         $include_path = realpath(__DIR__.'/../includes');
         $this->include_file = $include_path.'/exception.php';
     }
+
 
     /**
      * @param ServerRequestInterface $request
@@ -71,7 +76,13 @@ class EmailExceptionMiddleware
         }
     }
 
+
     /**
+     * Creates the email body.
+     *
+     * In this class, an include file creates a basic information table.
+     * Override this method to use your own method.
+     *
      * @param Exception $e
      *
      * @return string Exception explanation
@@ -80,6 +91,7 @@ class EmailExceptionMiddleware
     {
         return require $this->include_file;
     }
+
 
     /**
      * @return Swift_Mailer
@@ -96,6 +108,7 @@ class EmailExceptionMiddleware
 
         return $mailer;
     }
+
 
     /**
      * @return Swift_Message
