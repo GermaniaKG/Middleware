@@ -50,6 +50,9 @@ class EmailExceptionMiddleware
 
 
     /**
+     * Wrap $next callable in a try-catch block.
+     * When an exception is caught, an email will be sent, and the execption will be re-thrown.
+     *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
      * @param callable               $next
@@ -61,7 +64,30 @@ class EmailExceptionMiddleware
         try {
             // Try to do business as usual...
             return $next($request, $response);
-        } catch (\Exception $e) {
+
+        }
+        // Executed only in PHP 7, will not match in PHP 5.x
+        catch (\Throwable $e) {
+
+            // Render email body
+            $text = $this->render($e);
+
+            // Create email message instance
+            $message = $this->getMessage();
+            $message->setContentType('text/html')
+                    ->setSubject('['.$this->app_name.'] Exception '.get_class($e))
+                    ->setBody($text);
+
+            // Create emailer instance + send
+            $mailer = $this->getMailer();
+            $mailer->send($message);
+
+            // Throw exception again
+            throw $e;
+
+        }
+        // Executed only in PHP 5.x, will not be reached in PHP 7
+        catch (\Exception $e) {
 
             // Render email body
             $text = $this->render($e);
