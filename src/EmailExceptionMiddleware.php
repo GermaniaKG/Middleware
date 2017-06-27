@@ -66,7 +66,7 @@ class EmailExceptionMiddleware
 
             $message = $this->getMessage();
             $message->setContentType('text/html')
-                    ->setSubject('['.$this->app_name.']: Exception Abort: '.get_class($e))
+                    ->setSubject('['.$this->app_name.'] Exception '.get_class($e))
                     ->setBody($text);
 
             $mailer = $this->getMailer();
