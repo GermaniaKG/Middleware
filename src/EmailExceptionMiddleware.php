@@ -3,7 +3,7 @@
 namespace Germania\Middleware;
 
 use Germania\Middleware\Exceptions\FactoryException;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class EmailExceptionMiddleware
@@ -53,13 +53,13 @@ class EmailExceptionMiddleware
      * Wrap $next callable in a try-catch block.
      * When an exception is caught, an email will be sent, and the execption will be re-thrown.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param callable               $next
+     * @param RequestInterface   $request
+     * @param ResponseInterface  $response
+     * @param callable           $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         try
         {

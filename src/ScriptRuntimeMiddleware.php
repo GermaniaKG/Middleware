@@ -2,7 +2,7 @@
 
 namespace Germania\Middleware;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
@@ -29,13 +29,13 @@ class ScriptRuntimeMiddleware
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param callable               $next
+     * @param RequestInterface   $request
+     * @param ResponseInterface  $response
+     * @param callable           $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
 
         // call next Middleware
