@@ -62,16 +62,21 @@ class EmailExceptionMiddleware
             // Try to do business as usual...
             return $next($request, $response);
         } catch (\Exception $e) {
+
+            // Render email body
             $text = $this->render($e);
 
+            // Create email message instance
             $message = $this->getMessage();
             $message->setContentType('text/html')
                     ->setSubject('['.$this->app_name.'] Exception '.get_class($e))
                     ->setBody($text);
 
+            // Create emailer instance + send
             $mailer = $this->getMailer();
             $mailer->send($message);
 
+            // Throw exception again
             throw $e;
         }
     }
