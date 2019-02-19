@@ -1,6 +1,5 @@
 {
 	"name": "germania/middleware",
-	"version": "2.0.3",
 
 
 	"license": "proprietary",
@@ -10,12 +9,6 @@
 		"psr-4": {
 			"Germania\\Middleware\\": "src/"
 		}
-	},
-
-	"require-dev": {
-		"satooshi/php-coveralls": "dev-master",
-		"phpunit/phpunit": "^4.0",
-		"squizlabs/php_codesniffer": "^2.0"
 	},
 
 	"require": {
