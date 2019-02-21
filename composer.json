@@ -1,6 +1,7 @@
 {
 	"name": "germania/middleware",
 
+	"description": "Collection of Slim-style middleware",
 
 	"license": "proprietary",
 
