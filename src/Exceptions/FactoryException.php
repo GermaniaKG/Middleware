@@ -2,6 +2,6 @@
 
 namespace Germania\Middleware\Exceptions;
 
-class FactoryException extends \RuntimeException
+class FactoryException extends \RuntimeException implements MiddlewareExceptionInterface
 {
 }

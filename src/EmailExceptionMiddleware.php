@@ -34,8 +34,8 @@ class EmailExceptionMiddleware
 
     /**
      * @param string   $app_name        Name of application (used in email subject)
-     * @param callable $mailer_factory
-     * @param callable $message_factory
+     * @param callable $mailer_factory  Factory that returns Swift_Mailer instance
+     * @param callable $message_factory Factory that returns Swift_Message instance
      */
     public function __construct($app_name, callable $mailer_factory, callable $message_factory)
     {
@@ -90,14 +90,16 @@ class EmailExceptionMiddleware
      */
     public function handleThrowable( $e )
     {
-        // Render email body
-        $text = $this->render($e);
+        // Render email body, prepare some things
+        $text    = $this->render($e);
+        $format  = 'text/html';
+        $subject = sprintf("[%s] Exception %s", $this->app_name, get_class($e));
 
         // Create email message instance
         $message = $this->getMessage();
-        $message->setContentType('text/html')
-                ->setSubject('['.$this->app_name.'] Exception '.get_class($e))
-                ->setBody($text);
+        $message->setContentType( $format )
+                ->setSubject( $subject )
+                ->setBody( $text );
 
         // Create emailer instance + send
         $mailer = $this->getMailer();
