@@ -14,11 +14,11 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 	/**
 	 * @dataProvider provideCodesAndReason
 	 */
-	public function testSimple( $code, $reason)
+	public function testSimple( $code, $reason, $status_message)
 	{
 		// Setup dependencies
 		$logger = $this->prophesize(LoggerInterface::class);
-		$logger->info( Argument::type("string"), Argument::type("array"))->shouldBeCalled();
+		$logger->info( Argument::type("string"), [ 'status' => $status_message ])->shouldBeCalled();
 		$logger_mock = $logger->reveal();
 
 		$request = $this->prophesize(ServerRequestInterface::class);	
@@ -46,7 +46,8 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 	public function provideCodesAndReason()
 	{
 		return [
-			[ 400, "Not found"]
+			[ 400, "Not found", "400 Not found"],
+			[ 200, "OK", "200 OK"]
 		];
 	}
 
