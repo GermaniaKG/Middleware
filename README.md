@@ -1,6 +1,6 @@
-#Germania Middleware
+#Germania KG · Middleware
 
-Middleware tools for apps which accept PSR-7 style middleware, such as [Slim3](http://www.slimframework.com/docs/concepts/middleware.html)
+**Collection of useful middleware for [Slim3](http://www.slimframework.com/docs/concepts/middleware.html) apps:**
 
 - `\Psr\Http\Message\RequestInterface` - The PSR7 request object
 - `\Psr\Http\Message\ResponseInterface` - The PSR7 response object
