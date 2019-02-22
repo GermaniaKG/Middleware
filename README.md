@@ -122,7 +122,7 @@ Clone that repo, dive into directory and install Composer dependencies.
 
 ```bash
 # Clone and install
-$ git clone https://github.com/GermaniaKG/middleware.git <directory>
+$ git clone https://github.com/GermaniaKG/Middleware.git <directory>
 $ cd <directory>
 $ composer install
 ```
