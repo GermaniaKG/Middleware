@@ -9,6 +9,24 @@ Middleware tools for apps which accept PSR-7 style middleware, such as [Slim3](h
 [Oscar Otero's](https://github.com/oscarotero) [psr7-middlewares](https://github.com/oscarotero/psr7-middlewares) repo lists other middlewares and PHP software that utilize this pattern.
 
 
+
+## LogHttpStatusMiddleware
+
+Writes the HTTP Response's status code and reason to a PSR-3 Logger after *$next* has finished, using *Psr\Log\LoggerInterface::info* method.
+
+```php
+<?php
+use Germania\Middleware\LogHttpStatusMiddleware;
+
+$app        = new Slim\App;
+$logger     = new \Monolog\Logger;
+$middleware = new LogHttpStatusMiddleware( $logger);
+
+$app->add( $middleware );
+```
+
+
+
 ##EmailExceptionMiddleware
 
 ```php
@@ -64,6 +82,7 @@ $logger = new \Monolog\Logger;
 
 $app->add( new ScriptRuntimeMiddleware($logger) );
 ```
+
 
 
 ##LogExceptionMiddleware
