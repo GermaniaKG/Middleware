@@ -42,7 +42,7 @@ class ScriptRuntimeMiddleware
         $response = $next($request, $response);
 
         $this->log->info('Script runtime: ', [
-            'seconds' => (microtime('float') - $this->start_time),
+            'seconds' => (microtime('float') - $this->start_time)
         ]);
 
         return $response;
