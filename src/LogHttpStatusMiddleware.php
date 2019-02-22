@@ -9,6 +9,9 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 
+
+
+
 /**
  * Writes the HTTP Response's status code and reason to a PSR-3 Logger.
  */
@@ -18,11 +21,11 @@ class LogHttpStatusMiddleware
 
 
     /**
-     * @param LoggerInterface|null $logger Optional: PSR-3 Logger
+     * @param LoggerInterface $logger    PSR-3 Logger instance
      */
-    public function __construct( LoggerInterface $logger = null )
+    public function __construct( LoggerInterface $logger )
     {
-        $this->logger = $logger ?: new NullLogger;
+        $this->logger   = $logger;
     }
 
 
