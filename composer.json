@@ -1,9 +1,10 @@
 {
 	"name": "germania-kg/middleware",
+	"keywords": ["psr-15", "psr-7", "middleware", "exceptions", "http-status", "script-runtime", "double-pass", "single-pass" ],
 
-	"description": "Collection of Slim-style middleware",
+	"description": "Collection of PSR-15 and PSR-7-style middleware",
 
-	"license": "proprietary",
+	"license": "MIT",
 
 
 	"autoload": {
