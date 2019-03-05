@@ -5,8 +5,15 @@ namespace Germania\Middleware;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Server\MiddlewareInterface;
 
-class LogExceptionMiddleware
+
+
+
+
+class LogExceptionMiddleware implements MiddlewareInterface
 {
     /**
      * @var LoggerInterface
@@ -22,11 +29,45 @@ class LogExceptionMiddleware
         $this->log = $log;
     }
 
+    
+    /**
+     * PSR-15 Single Pass
+     * 
+     * @param  ServerRequestInterface  $request Server reuest instance
+     * @param  RequestHandlerInterface $handler Request handler
+     * @return ResponseInterface
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
+    {
+        try {
+            $response = $handler->handle($request);            
+            return $response;
+        }
+        // Executed only in PHP 7, will not match in PHP 5.x
+        catch (\Throwable $e)
+        {
+            $this->handleThrowable( $e );
+            throw $e;
+        }
+
+        // Executed only in PHP 5.x, will not be reached in PHP 7
+        catch (\Exception $e)
+        {
+            $this->handleThrowable( $e );
+            throw $e;
+        }        
+
+        
+    }     
+
+
 
     /**
-     * @param RequestInterface   $request
-     * @param ResponseInterface  $response
-     * @param callable           $next
+     * PSR-7 Double Pass
+     * 
+     * @param RequestInterface   $request   Request instance
+     * @param ResponseInterface  $response  Response instance
+     * @param callable           $next      Middelware callable
      *
      * @return ResponseInterface
      */
@@ -51,8 +92,6 @@ class LogExceptionMiddleware
             $this->handleThrowable( $e );
             throw $e;
         }
-
-        // Anything else NOT caught here will bubble up.
     }
 
 

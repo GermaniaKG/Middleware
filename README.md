@@ -1,6 +1,6 @@
 # Germania KG · Middleware
 
-**Collection of useful middleware for [Slim3](http://www.slimframework.com/docs/concepts/middleware.html) apps:**
+**Collection of useful PSR-15 Single Pass and Double Pass middleware we use in our apps**
 
 [![Packagist](https://img.shields.io/packagist/v/germania-kg/middleware.svg?style=flat)](https://packagist.org/packages/germania-kg/middleware)
 [![PHP version](https://img.shields.io/packagist/php-v/germania-kg/middleware.svg)](https://packagist.org/packages/germania-kg/middleware)
@@ -9,13 +9,6 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/GermaniaKG/Middleware/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/Middleware/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/GermaniaKG/Middleware/badges/build.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/Middleware/build-status/master)
 
-**Middleware pattern**
-
-- `\Psr\Http\Message\RequestInterface` - The PSR7 request object
-- `\Psr\Http\Message\ResponseInterface` - The PSR7 response object
-- `callable` - The next middleware callable
-
-[Oscar Otero's](https://github.com/oscarotero) [psr7-middlewares](https://github.com/oscarotero/psr7-middlewares) repo lists other middlewares and PHP software that utilize this pattern.
 
 
 ## Installation with Composer
@@ -24,9 +17,11 @@
 $ composer require germania-kg/middleware
 ```
 
+
+
 ## LogHttpStatusMiddleware
 
-Writes the HTTP Response's status code and reason to a PSR-3 Logger after *$next* has finished, using *Psr\Log\LoggerInterface::info* method.
+Writes the HTTP Response's status code and reason to a PSR-3 Logger after *$next* has finished, using *Psr\Log\LoggerInterface::info* method. While this middleware is PSR-15 compliant, here a Slim3 example:
 
 ```php
 <?php
@@ -42,6 +37,8 @@ $app->add( $middleware );
 
 
 ## EmailExceptionMiddleware
+
+While this middleware is PSR-15 compliant, here a Slim3 example:
 
 ```php
 <?php
@@ -84,7 +81,7 @@ catch (\Exception $e) {
 
 ## ScriptRuntimeMiddleware
 
-Logs the time taken from instantiation to the time when the _next_ middlewares have been executed. It uses the **info()** method described in [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) [LoggerInterface](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md#3-psrlogloggerinterface) 
+Logs the time taken from instantiation to the time when the _next_ middlewares have been executed. It uses the **info()** method described in [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) [LoggerInterface](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md#3-psrlogloggerinterface) . While this middleware is PSR-15 compliant, here a Slim3 example:
 
 
 ```php
@@ -102,7 +99,7 @@ $app->add( new ScriptRuntimeMiddleware($logger) );
 ## LogExceptionMiddleware
 
 
-Logs information about exceptions thrown during _next_ middlewares execution. It uses the **warning()** method described in [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) [LoggerInterface](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md#3-psrlogloggerinterface) 
+Logs information about exceptions thrown during _next_ middlewares execution. It uses the **warning()** method described in [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) [LoggerInterface](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md#3-psrlogloggerinterface). While this middleware is PSR-15 compliant, here a Slim3 example:
 
 ```php
 <?php
@@ -118,7 +115,7 @@ $app->add( new LogExceptionMiddleware($logger) );
 
 ## Development
 
-Clone that repo, dive into directory and install Composer dependencies.
+Clone that repo, dive into directory and install Composer dependencies. 
 
 ```bash
 # Clone and install

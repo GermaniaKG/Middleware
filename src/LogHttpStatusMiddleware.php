@@ -1,12 +1,14 @@
 <?php
 namespace Germania\Middleware;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\NullLogger;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Server\MiddlewareInterface;
+
 
 
 
@@ -15,7 +17,7 @@ use Psr\Log\NullLogger;
 /**
  * Writes the HTTP Response's status code and reason to a PSR-3 Logger.
  */
-class LogHttpStatusMiddleware
+class LogHttpStatusMiddleware implements MiddlewareInterface
 {
     use LoggerAwareTrait;
 
@@ -30,10 +32,41 @@ class LogHttpStatusMiddleware
 
 
 
+    
     /**
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @param  callable               $next
+     * PSR-15 Single Pass
+     * 
+     * @param  ServerRequestInterface  $request Server reuest instance
+     * @param  RequestHandlerInterface $handler Request handler
+     * @return ResponseInterface
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
+    {
+
+        $response = $handler->handle($request);            
+
+        // Now that all is done,
+        // concat to a string and send it to the PSR-3 Logger.
+        $status = $response->getStatusCode();
+        $reason = $response->getReasonPhrase();
+
+        $msg = sprintf("%s %s", $status, $reason);
+
+        $this->logger->info("Response", [
+            'status' => $msg
+        ]);
+
+        return $response;
+    }     
+
+
+
+    /**
+     * PSR-7 Double Pass
+     * 
+     * @param RequestInterface   $request   Request instance
+     * @param ResponseInterface  $response  Response instance
+     * @param callable           $next      Middelware callable
      *
      * @return ResponseInterface
      */

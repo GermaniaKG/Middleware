@@ -1,7 +1,7 @@
 <?php
 namespace tests;
 
-use Germania\Middleware\LogExceptionMiddleware;
+use Germania\Middleware\EmailExceptionMiddleware;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -11,17 +11,13 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class LogExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
+class EmailExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
 
 	public function testInstantiationAndInterfaces()
 	{
-		// Setup dependencies
-		$logger = $this->prophesize(LoggerInterface::class);
-		$logger_mock = $logger->reveal();
-
 		// Setup SUT
-		$sut = new LogExceptionMiddleware( $logger_mock );
+		$sut = $this->createSUT();
 		$this->assertInstanceOf( MiddlewareInterface::class, $sut );
 
 	}
@@ -29,9 +25,10 @@ class LogExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 
 	public function testSinglePassMiddlewareInterface()
 	{
+		// Setup SUT
+		$sut = $this->createSUT();
+
 		// Setup dependencies
-		$logger = $this->prophesize(LoggerInterface::class);
-		$logger_mock = $logger->reveal();
 
 		$request = $this->prophesize( ServerRequestInterface::class );
 		$request_mock = $request->reveal();
@@ -41,7 +38,6 @@ class LogExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 		$handler_mock = $handler->reveal();
 
 		// Setup SUT
-		$sut = new LogExceptionMiddleware( $logger_mock );
 		$result = $sut->process( $request_mock, $handler_mock);
 
 		$this->assertInstanceOf( ResponseInterface::class, $result );
@@ -51,13 +47,17 @@ class LogExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 
 	public function testDoublePassMiddlewareInterface()
 	{
+		// Setup SUT
+		$sut = $this->createSUT();
+
+
+		// Test stuff
 		$exception_message = "Yay!";
 
 		$next = function( $request, $response ) use ($exception_message) { throw new \Exception($exception_message, 1, new \Exception); };
 
 		// Setup dependencies
 		$logger = $this->prophesize(LoggerInterface::class);
-		$logger->warning( $exception_message, Argument::type("array"))->shouldBeCalled();
 		$logger_mock = $logger->reveal();
 
 		$request = $this->prophesize(RequestInterface::class);	
@@ -68,12 +68,33 @@ class LogExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 
 
 		// Setup SUT
-		$sut = new LogExceptionMiddleware( $logger_mock );
-
 		$this->expectException( \Exception::class );
 		$result_response = $sut( $request_mock, $response_mock, $next);
 
 	}
+
+
+
+	protected function createSUT()
+	{
+		$mailer = $this->prophesize( \Swift_Mailer::class );
+		$mailer_mock = $mailer->reveal();
+
+		$mailer_factory = function() use ($mailer_mock) {
+			return $mailer_mock;
+		};
+
+		$message = $this->prophesize( \Swift_Message::class );
+		$message_mock = $message->reveal();
+
+		$message_factory = function() use ($message_mock) {
+			return $message_mock; 
+		};
+
+		return new EmailExceptionMiddleware("TestApp", $mailer_factory, $message_factory);
+	}
+
+
 
 
 }
