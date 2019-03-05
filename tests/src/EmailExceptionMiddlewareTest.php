@@ -75,7 +75,6 @@ class EmailExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 
 
 
-
 	protected function createSUT()
 	{
 		$mailer = $this->prophesize( \Swift_Mailer::class );
