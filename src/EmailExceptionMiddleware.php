@@ -10,7 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
-
 class EmailExceptionMiddleware implements MiddlewareInterface
 {
     /**
@@ -58,7 +57,7 @@ class EmailExceptionMiddleware implements MiddlewareInterface
     
     /**
      * PSR-15 Single Pass
-     * 
+     *
      * @param  ServerRequestInterface  $request Server reuest instance
      * @param  RequestHandlerInterface $handler Request handler
      * @return ResponseInterface
@@ -66,31 +65,27 @@ class EmailExceptionMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         try {
-            $response = $handler->handle($request);            
+            $response = $handler->handle($request);
             return $response;
         }
         // Executed only in PHP 7, will not match in PHP 5.x
-        catch (\Throwable $e)
-        {
-            $this->handleThrowable( $e );
+        catch (\Throwable $e) {
+            $this->handleThrowable($e);
             throw $e;
         }
 
         // Executed only in PHP 5.x, will not be reached in PHP 7
-        catch (\Exception $e)
-        {
-            $this->handleThrowable( $e );
+        catch (\Exception $e) {
+            $this->handleThrowable($e);
             throw $e;
-        }        
-
-        
-    }     
+        }
+    }
 
     
 
     /**
      * PSR-7 Double Pass
-     * 
+     *
      * Wrap $next callable in a try-catch block.
      * When an exception is caught, an email will be sent, and the execption will be re-thrown.
      *
@@ -102,23 +97,20 @@ class EmailExceptionMiddleware implements MiddlewareInterface
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        try
-        {
+        try {
             // Try to do business as usual...
             return $next($request, $response);
         }
 
         // Executed only in PHP 7, will not match in PHP 5.x
-        catch (\Throwable $e)
-        {
-            $this->handleThrowable( $e );
+        catch (\Throwable $e) {
+            $this->handleThrowable($e);
             throw $e;
         }
 
         // Executed only in PHP 5.x, will not be reached in PHP 7
-        catch (\Exception $e)
-        {
-            $this->handleThrowable( $e );
+        catch (\Exception $e) {
+            $this->handleThrowable($e);
             throw $e;
         }
 
@@ -129,7 +121,7 @@ class EmailExceptionMiddleware implements MiddlewareInterface
     /**
      * @param  \Exception|\Throwable $e
      */
-    public function handleThrowable( $e )
+    public function handleThrowable($e)
     {
         // Render email body, prepare some things
         $text    = $this->render($e);
@@ -138,9 +130,9 @@ class EmailExceptionMiddleware implements MiddlewareInterface
 
         // Create email message instance
         $message = $this->getMessage();
-        $message->setContentType( $format )
-                ->setSubject( $subject )
-                ->setBody( $text );
+        $message->setContentType($format)
+                ->setSubject($subject)
+                ->setBody($text);
 
         // Create emailer instance + send
         $mailer = $this->getMailer();
