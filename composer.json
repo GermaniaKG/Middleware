@@ -26,15 +26,19 @@
 
 	"require-dev": {
         "php-coveralls/php-coveralls": "^2.0",
-        "phpunit/phpunit": "^5.7|^6.0|^7.0"
+        "phpunit/phpunit": "^5.7|^6.0|^7.0",
+		"friendsofphp/php-cs-fixer": "^2.15"
     },
     
     "scripts": {
-          "phpunit": "phpunit --colors=auto",
-  
-          "test": [
-              "@phpunit"
-          ]
+        "phpcs":       "php-cs-fixer fix --verbose --diff --dry-run src/",
+        "phpcs-apply": "php-cs-fixer fix --verbose --diff src/",
+
+		"phpunit": "phpunit --colors=auto",
+
+		"test": [
+			"@phpunit"
+		]
     }, 
 
 	"suggest": {
