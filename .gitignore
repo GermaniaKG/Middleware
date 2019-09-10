@@ -59,6 +59,7 @@ config.yaml
 tests/build
 build
 phpunit.xml
+.php_cs*
 
 
 # DO NOT IGNORE     #

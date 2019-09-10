@@ -9,10 +9,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
-
-
-
-
 class LogExceptionMiddleware implements MiddlewareInterface
 {
     /**
@@ -32,7 +28,7 @@ class LogExceptionMiddleware implements MiddlewareInterface
     
     /**
      * PSR-15 Single Pass
-     * 
+     *
      * @param  ServerRequestInterface  $request Server reuest instance
      * @param  RequestHandlerInterface $handler Request handler
      * @return ResponseInterface
@@ -40,31 +36,27 @@ class LogExceptionMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         try {
-            $response = $handler->handle($request);            
+            $response = $handler->handle($request);
             return $response;
         }
         // Executed only in PHP 7, will not match in PHP 5.x
-        catch (\Throwable $e)
-        {
-            $this->handleThrowable( $e );
+        catch (\Throwable $e) {
+            $this->handleThrowable($e);
             throw $e;
         }
 
         // Executed only in PHP 5.x, will not be reached in PHP 7
-        catch (\Exception $e)
-        {
-            $this->handleThrowable( $e );
+        catch (\Exception $e) {
+            $this->handleThrowable($e);
             throw $e;
-        }        
-
-        
-    }     
+        }
+    }
 
 
 
     /**
      * PSR-7 Double Pass
-     * 
+     *
      * @param RequestInterface   $request   Request instance
      * @param ResponseInterface  $response  Response instance
      * @param callable           $next      Middelware callable
@@ -73,23 +65,20 @@ class LogExceptionMiddleware implements MiddlewareInterface
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        try
-        {
+        try {
             // Try to do business as usual...
             return $next($request, $response);
         }
 
         // Executed only in PHP 7, will not match in PHP 5.x
-        catch (\Throwable $e)
-        {
-            $this->handleThrowable( $e );
+        catch (\Throwable $e) {
+            $this->handleThrowable($e);
             throw $e;
         }
 
         // Executed only in PHP 5.x, will not be reached in PHP 7
-        catch (\Exception $e)
-        {
-            $this->handleThrowable( $e );
+        catch (\Exception $e) {
+            $this->handleThrowable($e);
             throw $e;
         }
     }
@@ -98,7 +87,7 @@ class LogExceptionMiddleware implements MiddlewareInterface
     /**
      * @param  \Exception|\Throwable $e
      */
-    public function handleThrowable( $e )
+    public function handleThrowable($e)
     {
         $context = [
             'class'   => get_class($e),
@@ -119,5 +108,4 @@ class LogExceptionMiddleware implements MiddlewareInterface
 
         $this->log->warning($e->getMessage(), $context);
     }
-
 }

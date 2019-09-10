@@ -35,7 +35,7 @@ class ScriptRuntimeMiddleware implements MiddlewareInterface
 
     /**
      * PSR-15 Single Pass
-     * 
+     *
      * @param  ServerRequestInterface  $request Server reuest instance
      * @param  RequestHandlerInterface $handler Request handler
      * @return ResponseInterface
@@ -51,7 +51,7 @@ class ScriptRuntimeMiddleware implements MiddlewareInterface
 
     /**
      * PSR-7 Double Pass
-     * 
+     *
      * @param RequestInterface   $request
      * @param ResponseInterface  $response
      * @param callable           $next
