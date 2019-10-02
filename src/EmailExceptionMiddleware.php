@@ -124,7 +124,14 @@ class EmailExceptionMiddleware implements MiddlewareInterface
     public function handleThrowable($e)
     {
         // Render email body, prepare some things
-        $text    = $this->render($e);
+        $text    = $this->render($e, [
+            'package' => array(
+                'title'       => 'Germania KG · Middleware',
+                'name'       => 'germania-kg/middleware',
+                'packagist'  => 'https://packagist.org/packages/germania-kg/middleware',
+                'middleware' => 'EmailExceptionMiddleware'
+            )
+        ]);
         $format  = 'text/html';
         $subject = sprintf("[%s] Exception %s", $this->app_name, get_class($e));
 
@@ -149,8 +156,9 @@ class EmailExceptionMiddleware implements MiddlewareInterface
      *
      * @return string Exception explanation
      */
-    public function render($e)
+    public function render($e, array $context = array())
     {
+        extract($context);
         return require $this->include_file;
     }
 
