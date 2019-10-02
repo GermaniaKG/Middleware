@@ -49,5 +49,12 @@ endfor;
 ?>
 </table>
 
-<?php
+<?php if (!empty($package)): ?>
+<hr>
+<h5>About <?php echo $package['title'];?></h5>
+<p>This exception report was created by <b><?php echo $package['middleware'];?></b>
+which is part of <a href="<?php echo $package['packagist'];?>"><?php echo $package['name'];?></a></p>
+
+<?php  
+endif;
 return ob_get_clean();
