@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class EmailExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
-
+    use ProphecyTrait;
 	public function testInstantiationAndInterfaces()
 	{
 		// Setup SUT
@@ -60,10 +61,10 @@ class EmailExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 		$logger = $this->prophesize(LoggerInterface::class);
 		$logger_mock = $logger->reveal();
 
-		$request = $this->prophesize(RequestInterface::class);	
+		$request = $this->prophesize(RequestInterface::class);
 		$request_mock = $request->reveal();
 
-		$response = $this->prophesize(ResponseInterface::class);	
+		$response = $this->prophesize(ResponseInterface::class);
 		$response_mock = $response->reveal();
 
 
@@ -88,7 +89,7 @@ class EmailExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 		$message_mock = $message->reveal();
 
 		$message_factory = function() use ($message_mock) {
-			return $message_mock; 
+			return $message_mock;
 		};
 
 		return new EmailExceptionMiddleware("TestApp", $mailer_factory, $message_factory);

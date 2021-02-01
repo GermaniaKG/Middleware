@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -13,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ScriptRuntimeMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
-
+    use ProphecyTrait;
 
 	public function testInstantiationAndInterfaces()
 	{
@@ -40,10 +41,10 @@ class ScriptRuntimeMiddlewareTest extends \PHPUnit\Framework\TestCase
 
 
 		// Prepare PSR-7 stuff
-		$request = $this->prophesize(RequestInterface::class);	
+		$request = $this->prophesize(RequestInterface::class);
 		$request_mock = $request->reveal();
 
-		$response = $this->prophesize(ResponseInterface::class);	
+		$response = $this->prophesize(ResponseInterface::class);
 		$response_mock = $response->reveal();
 
 		$next = function( $request, $response ) { return $response; };
@@ -68,7 +69,7 @@ class ScriptRuntimeMiddlewareTest extends \PHPUnit\Framework\TestCase
 
 
 		// Prepare PSR-7 stuff
-		$response = $this->prophesize(ResponseInterface::class);	
+		$response = $this->prophesize(ResponseInterface::class);
 		$response_mock = $response->reveal();
 
 		$request = $this->prophesize( ServerRequestInterface::class );
@@ -81,7 +82,7 @@ class ScriptRuntimeMiddlewareTest extends \PHPUnit\Framework\TestCase
 		// Perform test
 		$result_response = $sut->process( $request_mock, $handler_mock);
 		$this->assertEquals( $result_response, $response_mock);
-		$this->assertInstanceOf( ResponseInterface::class, $result_response);		
+		$this->assertInstanceOf( ResponseInterface::class, $result_response);
 	}
 
 

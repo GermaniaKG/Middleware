@@ -6,13 +6,14 @@ use Psr\Log\LoggerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Prophecy\Argument;
-
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class LogExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
+    use ProphecyTrait;
 
 	public function testInstantiationAndInterfaces()
 	{
@@ -60,10 +61,10 @@ class LogExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 		$logger->warning( $exception_message, Argument::type("array"))->shouldBeCalled();
 		$logger_mock = $logger->reveal();
 
-		$request = $this->prophesize(RequestInterface::class);	
+		$request = $this->prophesize(RequestInterface::class);
 		$request_mock = $request->reveal();
 
-		$response = $this->prophesize(ResponseInterface::class);	
+		$response = $this->prophesize(ResponseInterface::class);
 		$response_mock = $response->reveal();
 
 

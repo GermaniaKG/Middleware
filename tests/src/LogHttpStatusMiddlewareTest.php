@@ -5,6 +5,7 @@ use Germania\Middleware\LogHttpStatusMiddleware;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -12,6 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
 
+    use ProphecyTrait;
 
 	/**
 	 * @dataProvider provideCodesAndReason
@@ -25,12 +27,12 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 		$sut = new LogHttpStatusMiddleware( $logger_mock );
 
 		// Prepare PSR-7 stuff
-		$request = $this->prophesize(ServerRequestInterface::class);	
+		$request = $this->prophesize(ServerRequestInterface::class);
 		$request_mock = $request->reveal();
 
-		$response = $this->prophesize(ResponseInterface::class);	
-		$response->getStatusCode()->willReturn( $code );	
-		$response->getReasonPhrase()->willReturn( $reason );	
+		$response = $this->prophesize(ResponseInterface::class);
+		$response->getStatusCode()->willReturn( $code );
+		$response->getReasonPhrase()->willReturn( $reason );
 		$response_mock = $response->reveal();
 
 		$next = function( $request, $response ) { return $response; };
@@ -60,9 +62,9 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 		$request = $this->prophesize( ServerRequestInterface::class );
 		$request_mock = $request->reveal();
 
-		$response = $this->prophesize(ResponseInterface::class);	
-		$response->getStatusCode()->willReturn( $code );	
-		$response->getReasonPhrase()->willReturn( $reason );	
+		$response = $this->prophesize(ResponseInterface::class);
+		$response->getStatusCode()->willReturn( $code );
+		$response->getReasonPhrase()->willReturn( $reason );
 		$response_mock = $response->reveal();
 
 		$handler = $this->prophesize( RequestHandlerInterface::class );
@@ -73,7 +75,7 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 		// Perform test
 		$result_response = $sut->process( $request_mock, $handler_mock);
 		$this->assertEquals( $result_response, $response_mock);
-		$this->assertInstanceOf( ResponseInterface::class, $result_response);		
+		$this->assertInstanceOf( ResponseInterface::class, $result_response);
 	}
 
 
