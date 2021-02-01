@@ -53,6 +53,7 @@ vendor
 node_modules
 var/*
 logs/*
+tests/build/*
 config.json
 config.yaml
 .htaccess

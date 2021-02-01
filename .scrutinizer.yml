@@ -9,10 +9,10 @@ build:
     tests:
         override:
             -
-                command: 'vendor/bin/phpunit --coverage-clover=coverage'
+                command: 'phpdbg -qrr vendor/bin/phpunit --coverage-clover tests/build/clover.xml'
                 coverage:
-                    file: 'coverage'
-                    format: 'php-clover'
+                    file: 'tests/build/clover.xml'
+                    format: 'clover'
 
     nodes:
 
@@ -31,6 +31,14 @@ build:
         php73:
             environment:
                 php: 7.3
+
+        php74:
+            environment:
+                php: 7.4
+
+        php80:
+            environment:
+                php: 8.0
 
 
 checks:
