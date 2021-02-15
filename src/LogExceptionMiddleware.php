@@ -23,7 +23,7 @@ class LogExceptionMiddleware implements MiddlewareInterface, LoggerAwareInterfac
     public function __construct(LoggerInterface $logger)
     {
         $this->setLogger($logger);
-        $this->setLogLevel( \Psr\Log\LogLevel::WARNING );
+        $this->setLogLevel(\Psr\Log\LogLevel::WARNING);
     }
 
 

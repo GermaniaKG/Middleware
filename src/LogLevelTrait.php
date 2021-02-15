@@ -16,10 +16,9 @@ trait LogLevelTrait
      *
      * @param string $loglevel
      */
-    public function setLogLevel( string $loglevel ) : self
+    public function setLogLevel(string $loglevel) : self
     {
         $this->loglevel = $loglevel;
         return $this;
     }
-
 }
