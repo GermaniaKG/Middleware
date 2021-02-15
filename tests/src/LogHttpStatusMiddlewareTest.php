@@ -83,8 +83,8 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 	public function provideCodesAndReason()
 	{
 		return [
-			[ 400, "Not found", "400 Not found"],
-			[ 200, "OK", "200 OK"]
+			"404 Not Found" => [ 400, "Not found", "400 Not found"],
+			"200 OK" => [ 200, "OK", "200 OK"]
 		];
 	}
 
