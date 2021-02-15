@@ -15,7 +15,8 @@ use Psr\Http\Server\MiddlewareInterface;
  */
 class LogHttpStatusMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
-    use LoggerAwareTrait;
+    use LoggerAwareTrait,
+        LogLevelTrait;
 
 
     /**
@@ -47,7 +48,7 @@ class LogHttpStatusMiddleware implements MiddlewareInterface, LoggerAwareInterfa
 
         $msg = sprintf("%s %s", $status, $reason);
 
-        $this->logger->info("Response", [
+        $this->logger->log($this->loglevel, "Response", [
             'status' => $msg
         ]);
 
@@ -79,7 +80,7 @@ class LogHttpStatusMiddleware implements MiddlewareInterface, LoggerAwareInterfa
 
         $msg = sprintf("%s %s", $status, $reason);
 
-        $this->logger->info("Response", [
+        $this->logger->log($this->loglevel, "Response", [
             'status' => $msg
         ]);
 

@@ -39,7 +39,7 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 	{
 		// Setup SUT
 		$logger = $this->prophesize(LoggerInterface::class);
-		$logger->info( Argument::type("string"), [ 'status' => $status_message ])->shouldBeCalled();
+		$logger->log( Argument::type("string"), Argument::type("string"), [ 'status' => $status_message ])->shouldBeCalled();
 		$logger_mock = $logger->reveal();
         $sut->setLogger( $logger_mock );
 
@@ -71,7 +71,7 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 	{
 		// Setup SUT
 		$logger = $this->prophesize(LoggerInterface::class);
-		$logger->info( Argument::type("string"), [ 'status' => $status_message ])->shouldBeCalled();
+		$logger->log( Argument::type("string"),  Argument::type("string"), [ 'status' => $status_message ])->shouldBeCalled();
 		$logger_mock = $logger->reveal();
 		$sut->setLogger( $logger_mock );
 

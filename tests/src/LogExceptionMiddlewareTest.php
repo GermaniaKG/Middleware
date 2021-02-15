@@ -64,7 +64,7 @@ class LogExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 
         // Setup SUT
         $logger = $this->prophesize(LoggerInterface::class);
-        $logger->warning( $exception_message, Argument::type("array"))->shouldBeCalled();
+        $logger->log( Argument::type("string"), $exception_message, Argument::type("array"))->shouldBeCalled();
         $logger_mock = $logger->reveal();
         $sut->setLogger($logger_mock);
 

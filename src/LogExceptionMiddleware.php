@@ -13,7 +13,8 @@ use Psr\Http\Server\MiddlewareInterface;
 
 class LogExceptionMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
-    use LoggerAwareTrait;
+    use LoggerAwareTrait,
+        LogLevelTrait;
 
 
     /**
@@ -22,6 +23,7 @@ class LogExceptionMiddleware implements MiddlewareInterface, LoggerAwareInterfac
     public function __construct(LoggerInterface $logger)
     {
         $this->setLogger($logger);
+        $this->setLogLevel( \Psr\Log\LogLevel::WARNING );
     }
 
 
@@ -105,6 +107,6 @@ class LogExceptionMiddleware implements MiddlewareInterface, LoggerAwareInterfac
             ]);
         }
 
-        $this->logger->warning($e->getMessage(), $context);
+        $this->logger->log($this->loglevel, $e->getMessage(), $context);
     }
 }

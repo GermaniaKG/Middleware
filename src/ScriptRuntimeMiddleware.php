@@ -13,7 +13,8 @@ use Psr\Http\Server\MiddlewareInterface;
 
 class ScriptRuntimeMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
-    use LoggerAwareTrait;
+    use LoggerAwareTrait,
+        LogLevelTrait;
 
 
     /**
@@ -68,7 +69,7 @@ class ScriptRuntimeMiddleware implements MiddlewareInterface, LoggerAwareInterfa
 
     protected function logRuntime()
     {
-        $this->logger->info('Script runtime: ', [
+        $this->logger->log($this->loglevel, 'Script runtime: ', [
             'seconds' => (microtime('float') - $this->start_time)
         ]);
     }
