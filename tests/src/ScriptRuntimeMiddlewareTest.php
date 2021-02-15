@@ -3,6 +3,7 @@ namespace tests;
 
 use Germania\Middleware\ScriptRuntimeMiddleware;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Prophecy\Argument;
@@ -16,7 +17,7 @@ class ScriptRuntimeMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
     use ProphecyTrait;
 
-	public function testInstantiationAndInterfaces()
+	public function testInstantiationAndInterfaces() : ScriptRuntimeMiddleware
 	{
 		// Setup dependencies
 		$logger = $this->prophesize(LoggerInterface::class);
@@ -25,19 +26,23 @@ class ScriptRuntimeMiddlewareTest extends \PHPUnit\Framework\TestCase
 		// Setup SUT
 		$sut = new ScriptRuntimeMiddleware( $logger_mock );
 		$this->assertInstanceOf( MiddlewareInterface::class, $sut );
+        $this->assertInstanceOf( LoggerAwareInterface::class, $sut );
 
+        return $sut;
 	}
 
 
-
-	public function testDoublePass()
+    /**
+     * @depends testInstantiationAndInterfaces
+     */
+	public function testDoublePass( ScriptRuntimeMiddleware $sut )
 	{
 		// Setup SUT
 		$logger = $this->prophesize(LoggerInterface::class);
 		$logger->info( Argument::type("string"), Argument::type("array"))->shouldBeCalled();
 		$logger_mock = $logger->reveal();
 
-		$sut = new ScriptRuntimeMiddleware( $logger_mock );
+		$sut->setLogger($logger_mock );
 
 
 		// Prepare PSR-7 stuff
@@ -59,13 +64,16 @@ class ScriptRuntimeMiddlewareTest extends \PHPUnit\Framework\TestCase
 
 
 
-	public function testSinglePass()
+    /**
+     * @depends testInstantiationAndInterfaces
+     */
+	public function testSinglePass( ScriptRuntimeMiddleware $sut )
 	{
 		// Setup SUT
 		$logger = $this->prophesize(LoggerInterface::class);
 		$logger->info( Argument::type("string"), Argument::type("array"))->shouldBeCalled();
 		$logger_mock = $logger->reveal();
-		$sut = new ScriptRuntimeMiddleware( $logger_mock );
+		$sut->setLogger($logger_mock );
 
 
 		// Prepare PSR-7 stuff

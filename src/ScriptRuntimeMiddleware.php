@@ -3,18 +3,18 @@
 namespace Germania\Middleware;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
-class ScriptRuntimeMiddleware implements MiddlewareInterface
+class ScriptRuntimeMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    public $log;
+    use LoggerAwareTrait;
+
 
     /**
      * @var float
@@ -22,12 +22,12 @@ class ScriptRuntimeMiddleware implements MiddlewareInterface
     public $start_time;
 
     /**
-     * @param LoggerInterface $log
+     * @param LoggerInterface $logger
      * @param float           $start_time Script start time as float, defaults to "now"
      */
-    public function __construct(LoggerInterface $log, $start_time = null)
+    public function __construct(LoggerInterface $logger, $start_time = null)
     {
-        $this->log = $log;
+        $this->setLogger($logger);
         $this->start_time = $start_time ?: microtime('float');
     }
 
@@ -68,7 +68,7 @@ class ScriptRuntimeMiddleware implements MiddlewareInterface
 
     protected function logRuntime()
     {
-        $this->log->info('Script runtime: ', [
+        $this->logger->info('Script runtime: ', [
             'seconds' => (microtime('float') - $this->start_time)
         ]);
     }

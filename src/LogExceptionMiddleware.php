@@ -3,29 +3,28 @@
 namespace Germania\Middleware;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
-class LogExceptionMiddleware implements MiddlewareInterface
+class LogExceptionMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    public $log;
+    use LoggerAwareTrait;
 
 
     /**
-     * @param LoggerInterface $log
+     * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $log)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->log = $log;
+        $this->setLogger($logger);
     }
 
-    
+
     /**
      * PSR-15 Single Pass
      *
@@ -106,6 +105,6 @@ class LogExceptionMiddleware implements MiddlewareInterface
             ]);
         }
 
-        $this->log->warning($e->getMessage(), $context);
+        $this->logger->warning($e->getMessage(), $context);
     }
 }

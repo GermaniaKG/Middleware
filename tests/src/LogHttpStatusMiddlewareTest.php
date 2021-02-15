@@ -3,6 +3,7 @@ namespace tests;
 
 use Germania\Middleware\LogHttpStatusMiddleware;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -15,16 +16,32 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 
     use ProphecyTrait;
 
+
+    public function testInstantiationAndInterfaces() : LogHttpStatusMiddleware
+    {
+        $logger = $this->prophesize(LoggerInterface::class);
+        $logger_mock = $logger->reveal();
+
+        $sut = new LogHttpStatusMiddleware($logger_mock);
+
+        $this->assertInstanceOf( MiddlewareInterface::class, $sut );
+        $this->assertInstanceOf( LoggerAwareInterface::class, $sut );
+
+        return $sut;
+    }
+
+
 	/**
-	 * @dataProvider provideCodesAndReason
+	 * @depends testInstantiationAndInterfaces
+     * @dataProvider provideCodesAndReason
 	 */
-	public function testDoublePass( $code, $reason, $status_message)
+	public function testDoublePass( $code, $reason, $status_message, LogHttpStatusMiddleware $sut)
 	{
 		// Setup SUT
 		$logger = $this->prophesize(LoggerInterface::class);
 		$logger->info( Argument::type("string"), [ 'status' => $status_message ])->shouldBeCalled();
 		$logger_mock = $logger->reveal();
-		$sut = new LogHttpStatusMiddleware( $logger_mock );
+        $sut->setLogger( $logger_mock );
 
 		// Prepare PSR-7 stuff
 		$request = $this->prophesize(ServerRequestInterface::class);
@@ -47,15 +64,16 @@ class LogHttpStatusMiddlewareTest extends \PHPUnit\Framework\TestCase
 
 
 	/**
+     * @depends testInstantiationAndInterfaces
 	 * @dataProvider provideCodesAndReason
 	 */
-	public function testSinglePass( $code, $reason, $status_message)
+	public function testSinglePass( $code, $reason, $status_message, LogHttpStatusMiddleware $sut)
 	{
 		// Setup SUT
 		$logger = $this->prophesize(LoggerInterface::class);
 		$logger->info( Argument::type("string"), [ 'status' => $status_message ])->shouldBeCalled();
 		$logger_mock = $logger->reveal();
-		$sut = new LogHttpStatusMiddleware( $logger_mock );
+		$sut->setLogger( $logger_mock );
 
 
 		// Prepare PSR-7 stuff
