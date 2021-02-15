@@ -2,6 +2,7 @@
 namespace Germania\Middleware;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -12,9 +13,10 @@ use Psr\Http\Server\MiddlewareInterface;
 /**
  * Writes the HTTP Response's status code and reason to a PSR-3 Logger.
  */
-class LogHttpStatusMiddleware implements MiddlewareInterface
+class LogHttpStatusMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
-    use LoggerAwareTrait;
+    use LoggerAwareTrait,
+        LogLevelTrait;
 
 
     /**
@@ -22,12 +24,12 @@ class LogHttpStatusMiddleware implements MiddlewareInterface
      */
     public function __construct(LoggerInterface $logger)
     {
-        $this->logger = $logger;
+        $this->setLogger($logger);
     }
 
 
 
-    
+
     /**
      * PSR-15 Single Pass
      *
@@ -46,7 +48,7 @@ class LogHttpStatusMiddleware implements MiddlewareInterface
 
         $msg = sprintf("%s %s", $status, $reason);
 
-        $this->logger->info("Response", [
+        $this->logger->log($this->loglevel, "Response", [
             'status' => $msg
         ]);
 
@@ -78,7 +80,7 @@ class LogHttpStatusMiddleware implements MiddlewareInterface
 
         $msg = sprintf("%s %s", $status, $reason);
 
-        $this->logger->info("Response", [
+        $this->logger->log($this->loglevel, "Response", [
             'status' => $msg
         ]);
 

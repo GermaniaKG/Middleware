@@ -15,87 +15,84 @@ use Psr\Http\Server\RequestHandlerInterface;
 class EmailExceptionMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
     use ProphecyTrait;
-	public function testInstantiationAndInterfaces()
-	{
-		// Setup SUT
-		$sut = $this->createSUT();
-		$this->assertInstanceOf( MiddlewareInterface::class, $sut );
 
-	}
+    public function testInstantiationAndInterfaces() : EmailExceptionMiddleware
+    {
+        $mailer_factory = $this->createSwiftMailerFactory();
+        $message_factory = $this->createSwiftMessageFactory();
 
+        $sut = new EmailExceptionMiddleware("TestApp", $mailer_factory, $message_factory);
 
-	public function testSinglePassMiddlewareInterface()
-	{
-		// Setup SUT
-		$sut = $this->createSUT();
+        $this->assertInstanceOf( MiddlewareInterface::class, $sut );
 
-		// Setup dependencies
-
-		$request = $this->prophesize( ServerRequestInterface::class );
-		$request_mock = $request->reveal();
-
-		$handler = $this->prophesize( RequestHandlerInterface::class );
-		$handler->handle( Argument::exact($request_mock) )->shouldBeCalled();
-		$handler_mock = $handler->reveal();
-
-		// Setup SUT
-		$result = $sut->process( $request_mock, $handler_mock);
-
-		$this->assertInstanceOf( ResponseInterface::class, $result );
-
-	}
+        return $sut;
+    }
 
 
-	public function testDoublePassMiddlewareInterface()
-	{
-		// Setup SUT
-		$sut = $this->createSUT();
+    /**
+     * @depends testInstantiationAndInterfaces
+     */
+    public function testSinglePassMiddlewareInterface( EmailExceptionMiddleware $sut ) : void
+    {
+        // Setup dependencies
+        $request = $this->prophesize( ServerRequestInterface::class );
+        $request_mock = $request->reveal();
+
+        $handler = $this->prophesize( RequestHandlerInterface::class );
+        $handler->handle( Argument::exact($request_mock) )->shouldBeCalled();
+        $handler_mock = $handler->reveal();
+
+        // Setup SUT
+        $result = $sut->process( $request_mock, $handler_mock);
+        $this->assertInstanceOf( ResponseInterface::class, $result );
+
+    }
 
 
-		// Test stuff
-		$exception_message = "Yay!";
+    /**
+     * @depends testInstantiationAndInterfaces
+     */
+    public function testDoublePassMiddlewareInterface(EmailExceptionMiddleware $sut ) : void
+    {
+        // Setup dependencies
+        $exception_message = "Yay!";
+        $next = function( $request, $response ) use ($exception_message) { throw new \Exception($exception_message, 1, new \Exception); };
 
-		$next = function( $request, $response ) use ($exception_message) { throw new \Exception($exception_message, 1, new \Exception); };
+        $request = $this->prophesize(RequestInterface::class);
+        $request_mock = $request->reveal();
 
-		// Setup dependencies
-		$logger = $this->prophesize(LoggerInterface::class);
-		$logger_mock = $logger->reveal();
+        $response = $this->prophesize(ResponseInterface::class);
+        $response_mock = $response->reveal();
 
-		$request = $this->prophesize(RequestInterface::class);
-		$request_mock = $request->reveal();
-
-		$response = $this->prophesize(ResponseInterface::class);
-		$response_mock = $response->reveal();
-
-
-		// Setup SUT
-		$this->expectException( \Exception::class );
-		$result_response = $sut( $request_mock, $response_mock, $next);
-
-	}
+        // Setup SUT
+        $this->expectException( \Exception::class );
+        $sut( $request_mock, $response_mock, $next);
+    }
 
 
 
-	protected function createSUT()
-	{
-		$mailer = $this->prophesize( \Swift_Mailer::class );
-		$mailer_mock = $mailer->reveal();
 
-		$mailer_factory = function() use ($mailer_mock) {
-			return $mailer_mock;
-		};
+    public function createSwiftMailerFactory() : callable
+    {
+        $mailer = $this->prophesize( \Swift_Mailer::class );
+        $mailer_mock = $mailer->reveal();
 
-		$message = $this->prophesize( \Swift_Message::class );
-		$message_mock = $message->reveal();
-
-		$message_factory = function() use ($message_mock) {
-			return $message_mock;
-		};
-
-		return new EmailExceptionMiddleware("TestApp", $mailer_factory, $message_factory);
-	}
+        return function() use ($mailer_mock) {
+            return $mailer_mock;
+        };
+    }
 
 
+    public function createSwiftMessageFactory() : callable
+    {
+
+        $message = $this->prophesize( \Swift_Message::class );
+        $message_mock = $message->reveal();
+
+        return function() use ($message_mock) {
+            return $message_mock;
+        };
+    }
 
 
 }

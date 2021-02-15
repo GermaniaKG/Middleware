@@ -41,6 +41,13 @@ $middleware = new LogHttpStatusMiddleware( $logger);
 $app->add( $middleware );
 ```
 
+Class **LogHttpStatusMiddleware** also implements `Psr\Log\LoggerAwareInterface` and additionally uses  `Germania\Middleware\LogLevelTrait`, so configure logging like this:
+
+```php
+$middleware->setLogger($monolog)
+           ->setLogLevel( \Psr\Log\LogLevel::INFO )
+```
+
 
 
 ## EmailExceptionMiddleware
@@ -101,6 +108,13 @@ $logger = new \Monolog\Logger;
 $app->add( new ScriptRuntimeMiddleware($logger) );
 ```
 
+Class **ScriptRuntimeMiddleware** also implements `Psr\Log\LoggerAwareInterface` and additionally uses `Germania\Middleware\LogLevelTrait`, so configure logging like this:
+
+```php
+$middleware->setLogger($monolog)
+           ->setLogLevel( \Psr\Log\LogLevel::INFO )
+```
+
 
 
 ## LogExceptionMiddleware
@@ -116,6 +130,13 @@ $app = new Slim\App;
 $logger = new \Monolog\Logger;
 
 $app->add( new LogExceptionMiddleware($logger) );
+```
+
+Class **LogExceptionMiddleware** also implements `Psr\Log\LoggerAwareInterface` and additionally uses  `Germania\Middleware\LogLevelTrait`, so configure logging like this:
+
+```php
+$middleware->setLogger($monolog)
+           ->setLogLevel( \Psr\Log\LogLevel::INFO )
 ```
 
 
