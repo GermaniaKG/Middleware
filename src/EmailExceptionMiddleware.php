@@ -48,13 +48,15 @@ class EmailExceptionMiddleware implements MiddlewareInterface
         $this->mailer_factory = $mailer_factory;
         $this->message_factory = $message_factory;
 
-        $include_path = realpath(__DIR__.'/../includes');
-        $this->include_file = $include_path.'/exception.php';
+        $this->include_file = join(\DIRECTORY_SEPARATOR, [
+            realpath(__DIR__.'/../includes'),
+            'exception.php'
+        ]);
     }
 
 
 
-    
+
     /**
      * PSR-15 Single Pass
      *
@@ -81,7 +83,7 @@ class EmailExceptionMiddleware implements MiddlewareInterface
         }
     }
 
-    
+
 
     /**
      * PSR-7 Double Pass
