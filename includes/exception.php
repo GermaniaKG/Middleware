@@ -1,6 +1,6 @@
 <?php
-if (!isset($e) or (!$e instanceOf \Exception)) {
-  return 'Error: No Exception instance given';
+if (!isset($e) or (!$e instanceOf \Throwable)) {
+  return 'Error: No Exception or Throwable instance given';
   return;
 }
 ob_start();
@@ -55,6 +55,6 @@ endfor;
 <p>This exception report was created by <b><?php echo $package['middleware'];?></b>
 which is part of <a href="<?php echo $package['packagist'];?>"><?php echo $package['name'];?></a></p>
 
-<?php  
+<?php
 endif;
 return ob_get_clean();
